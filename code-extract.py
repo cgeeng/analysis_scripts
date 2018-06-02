@@ -3,6 +3,8 @@
 # Usage is:
 #   virtualenv -p python2.7 venv
 #   source venv/bin/activate
+#   python -v code-extract.py test-dir Codebook.csv csv/test.csv
+
 #   
 #   code-extract.py [update] outputdir codebook.csv [master.csv] [transcript1.csv transcript2.csv ...]  
 #   (example)python code-extract.py output-dir Codebook.csv csv/transcript.csv
@@ -92,7 +94,7 @@ class Quote(object):
         codes: list of codes
   """
   
-  def __init__(self, interview, quoteNum, speaker=' ', text=' ', codes=[]):
+  def __init__(self, interview, quoteNum, speaker=' ', text=' ', codes=[], comment=''):
     """ Returns a Quote object """
 
     self.interview = interview
@@ -102,6 +104,7 @@ class Quote(object):
     self.speaker = speaker
     self.text = text  
     self.codes = codes  # Should be a tuple
+    self.comment = comment
 
   def printHTML(self, page, codeLinkTo='all' ):
     """ Prints a table row for quote """
@@ -111,7 +114,11 @@ class Quote(object):
     page.td( self.speaker )
     page.td.close() 
     page.td( ) 
-    page.a( self.text, href=self.interview.outFileBase + '.html#' + str(self.quoteID) )
+    if not self.comment:
+      page.a( self.text, href=self.interview.outFileBase + '.html#' + str(self.quoteID), title=self.comment )
+    else:
+      #add an attribute indicating there is a comment, so that font can be changed
+      page.a( self.text, href=self.interview.outFileBase + '.html#' + str(self.quoteID), title=self.comment, id='hasComment' )
     page.td.close() 
     page.td(  )
     for i, code in enumerate(self.codes):
@@ -161,10 +168,10 @@ class Interview(object):
     with open( self.outFileDir + '/' + self.outFileBase+'.html', 'w' ) as outFile:   # Should be of form, e.g.,  Johnson.html
       header = "Interview with "  + self.name
       #footer = "This is the end."
-      styles = ( 'layout.css' )
+      styles = ( '../layout.css' )
 
       page = markup.page()
-      page.init( title=header, header=header, css=styles, charset='utf-8' )
+      page.init( title=header, header=header, css=styles, charset='utf-8', script=['../format.js', 'jquery-3.3.1.slim.min.js'] )
       page.br()
       page.a( "Index", color="blue", href="index.html")
       page.br( )
@@ -252,7 +259,7 @@ def genIndex( interviews, outputdir, codes ):
     styles = ( 'layout.css' )
 
     page = markup.page()
-    page.init( title=header, header=header, css=styles, charset='utf-8' )
+    page.init( title=header, header=header, css=styles, charset='utf-8', script=['../format.js', 'jquery-3.3.1.slim.min.js'] )
     page.br()
     page.a( "Index", color="blue", href="index.html") 
     page.add( "&nbsp;&nbsp;-&nbsp;&nbsp;" )
@@ -288,7 +295,7 @@ def genHistograms( interviews, outputdir, codes, codeCountsPerSpeaker ):
   with open(outputdir + '/' + 'histograms.html', 'w') as outFile:
     header = "Interviews and codes"
     #footer = "This is the end."
-    styles = ( 'layout.css' )
+    styles = ( '../layout.css' )
 
     page = markup.page()
     page.init( title=header, header=header, css=styles, charset='utf-8' )
@@ -325,10 +332,10 @@ def genCodeHTML( interviews, outputdir, code ):
   with open(outputdir + '/' + urlSafe(code) + '.html', 'w') as outFile:
     header = "All references to "  + code 
     #footer = "This is the end."
-    styles = ( 'layout.css' )
+    styles = ( '../layout.css' )
 
     page = markup.page()
-    page.init( title=header, header=header, css=styles, charset='utf-8' )
+    page.init( title=header, header=header, css=styles, charset='utf-8', script=['../format.js', 'jquery-3.3.1.slim.min.js'] )
     page.br()
     page.a( "Index", color="blue", href="index.html")
     page.br( )
@@ -421,10 +428,10 @@ def genCodePerTransHTML( interviews, outputdir, code ):
     with open(outputdir + '/' + urlSafe(code) + '_' + interview.name + '.html', 'w') as outFile:
       header = "All references to '"  + code + "' in interview '" + interview.name + "'"
       #footer = "This is the end."
-      styles = ( 'layout.css' )
+      styles = ( '../layout.css' )
 
       page = markup.page()
-      page.init( title=header, header=header, css=styles, charset='utf-8' )
+      page.init( title=header, header=header, css=styles, charset='utf-8', script=['../format.js', 'jquery-3.3.1.slim.min.js'] )
       page.br()
       page.a( "Index", color="blue", href="index.html")
       page.br( )
@@ -501,7 +508,7 @@ def readOriginalCSVs( transcripts, codes, outputdir, codeCountsPerSpeaker):
       transReader = csv.reader( transFile, dialect='excel' )
       interview = Interview(transcriptFileName, outputdir )
       for row in transReader:
-        # first value is note, second is quote, following fields are codes
+        # first value is quote, second is comment, following fields are codes
         #note = stripQuotesSpace( row[0] )
         quote = stripQuotesSpace( row[0] )
         if( quote != '' ):
@@ -518,8 +525,10 @@ def readOriginalCSVs( transcripts, codes, outputdir, codeCountsPerSpeaker):
           
           lastPerson = person
 
+          quoteComment = stripQuotesSpace( row[1] )
+
           quoteCodes = []
-          for code in row[1:]:
+          for code in row[2:]:
             strippedCode = stripQuotesSpace( code )
             #print strippedCode
             if( strippedCode == '' ):
@@ -533,7 +542,7 @@ def readOriginalCSVs( transcripts, codes, outputdir, codeCountsPerSpeaker):
             quoteCodes.append( strippedCode )
             codeCountsPerSpeaker[strippedCode].add( person ) 
 
-          quote = Quote( interview, numQuotes, person, text, quoteCodes ) 
+          quote = Quote( interview, numQuotes, person, text, quoteCodes, quoteComment ) 
           interview.addQuote( quote )
       interviews.append(interview)
 

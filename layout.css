@@ -1,6 +1,7 @@
-
+@import url('https://fonts.googleapis.com/css?family=Roboto');
 table{
   border-collapse:collapse;
+  font-family: 'Roboto', sans-serif;
 }
 
 table tr {
@@ -30,4 +31,11 @@ a:hover {
 a:active {
     color: inherit;
     text-decoration: inherit;
+}
+#hasComment {
+  /* For all urls with comments */
+  color:#4f1b99;
+}
+td:nth-child(1) {  
+  font-weight: bold;
 }
