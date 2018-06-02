@@ -26,9 +26,9 @@
 # lines
 # 
 # We assume transcript1.csv, transcript2.csv, ... has the form:
-#   quote , codeword1, codeword2 , ...
+#   quote , comment, codeword1, codeword2 , ...
 # where quote is a (possibly quote-surrounded) string with prefix `Name: text'
-# for some quoted speech text. Each codeword is a string. 
+# for some quoted speech text. Each codeword is a string. Each comment is a string.
 #
 #
 # TODO: fix below
@@ -173,7 +173,7 @@ class Interview(object):
       styles = ( '../layout.css' )
 
       page = markup.page()
-      page.init( title=header, header=header, css=styles, charset='utf-8', script=['../format.js', 'jquery-3.3.1.slim.min.js'] )
+      page.init( title=header, header=header, css=styles, charset='utf-8', script=['../format.js', '../jquery-3.3.1.slim.min.js'] )
       page.br()
       page.a( "Index", color="blue", href="index.html")
       page.br( )
@@ -261,7 +261,7 @@ def genIndex( interviews, outputdir, codes ):
     styles = ( 'layout.css' )
 
     page = markup.page()
-    page.init( title=header, header=header, css=styles, charset='utf-8', script=['../format.js', 'jquery-3.3.1.slim.min.js'] )
+    page.init( title=header, header=header, css=styles, charset='utf-8', script=['../format.js', '../jquery-3.3.1.slim.min.js'] )
     page.br()
     page.a( "Index", color="blue", href="index.html") 
     page.add( "&nbsp;&nbsp;-&nbsp;&nbsp;" )
@@ -337,7 +337,7 @@ def genCodeHTML( interviews, outputdir, code ):
     styles = ( '../layout.css' )
 
     page = markup.page()
-    page.init( title=header, header=header, css=styles, charset='utf-8', script=['../format.js', 'jquery-3.3.1.slim.min.js'] )
+    page.init( title=header, header=header, css=styles, charset='utf-8', script=['../format.js', '../jquery-3.3.1.slim.min.js'] )
     page.br()
     page.a( "Index", color="blue", href="index.html")
     page.br( )
@@ -434,7 +434,7 @@ def genCodePerTransHTML( interviews, outputdir, code ):
       styles = ( '../layout.css' )
 
       page = markup.page()
-      page.init( title=header, header=header, css=styles, charset='utf-8', script=['../format.js', 'jquery-3.3.1.slim.min.js'] )
+      page.init( title=header, header=header, css=styles, charset='utf-8', script=['../format.js', '../jquery-3.3.1.slim.min.js'] )
       page.br()
       page.a( "Index", color="blue", href="index.html")
       page.br( )
