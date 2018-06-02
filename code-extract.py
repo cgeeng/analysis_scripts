@@ -55,6 +55,7 @@ def urlSafe( string ):
   urlSafe = string.replace( '/', '_' )
   urlSafe = urlSafe.replace( '?', '_' )
   urlSafe = urlSafe.replace( ' ', '_' )
+  urlSafe = urlSafe.replace( "'", '' )
   return urlSafe
 
 
