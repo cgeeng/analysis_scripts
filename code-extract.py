@@ -4,7 +4,8 @@
 #   virtualenv -p python2.7 venv
 #   source venv/bin/activate
 #   python -v code-extract.py test-dir Codebook.csv csv/test.csv
-
+#   ...
+#   deactivate (to deactivate the virtual machine)
 #   
 #   code-extract.py [update] outputdir codebook.csv [master.csv] [transcript1.csv transcript2.csv ...]  
 #   (example)python code-extract.py output-dir Codebook.csv csv/transcript.csv
@@ -362,12 +363,12 @@ def genMasterCSV( masterFilename, interviews ):
   """ Generates a single CSV with all quotes from all interviews """
   
   with open(masterFilename, 'w') as outFile:
-    fields = ['interviewName','quoteID','speaker','text']
+    fields = ['interviewName','quoteID','speaker','text','comment']
     writer = csv.writer( outFile, dialect='excel' )
     writer.writerow(fields)
     for interview in interviews:
       for quote in interview.quotes:
-        row = [quote.interview.name,quote.quoteID,quote.speaker,quote.text]
+        row = [quote.interview.name,quote.quoteID,quote.speaker,quote.text,quote.comment]
         row.extend(quote.codes)
         writer.writerow(row) 
 
@@ -379,7 +380,7 @@ def readMasterCSV( masterFilename, outputdir ):
     interviewNames = []
     interviews = {}
     #fields = ['interview','quoteID','speaker','text','code']
-    reader = csv.DictReader( inFile, dialect='excel', fieldnames=['interviewName','quoteID','speaker','text'], restkey='codes' )
+    reader = csv.DictReader( inFile, dialect='excel', fieldnames=['interviewName','quoteID','speaker','text','comment'], restkey='codes' )
     next(reader)
     for row in reader:
         
@@ -388,9 +389,10 @@ def readMasterCSV( masterFilename, outputdir ):
         interviews[interviewName] = Interview( interviewName, outputdir )
 
       if 'codes' in row:
-        quote = Quote( interviews[interviewName], row['quoteID'], row['speaker'], row['text'], row['codes'] )
+        quote = Quote( interviews[interviewName], row['quoteID'], row['speaker'], row['text'], row['codes'], row['comment'] )
       else: 
-        quote = Quote( interviews[interviewName], row['quoteID'], row['speaker'], row['text'] )
+        #doesn't include comment, not sure how to fix this
+        quote = Quote( interviews[interviewName], row['quoteID'], row['speaker'], row['text'], )
 
       interviews[interviewName].addQuote( quote )
 
