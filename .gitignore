@@ -3,3 +3,6 @@ __pycache__
 csv
 output-dir
 test-dir
+smarthome
+Codebook.csv
+DS_Store

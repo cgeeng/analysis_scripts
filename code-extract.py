@@ -8,7 +8,7 @@
 #   deactivate (to deactivate the virtual machine)
 #   
 #   code-extract.py [update] outputdir codebook.csv [master.csv] [transcript1.csv transcript2.csv ...]  
-#   (example)python code-extract.py output-dir Codebook.csv csv/transcript.csv
+#   (example)python code-extract.py output-dir Codebook.csv smarthome/1.csv smarthome/2.csv smarthome/3.csv smarthome/4.csv smarthome/5.csv smarthome/6.csv smarthome/7.csv smarthome/8.csv smarthome/9.csv smarthome/10.csv smarthome/11.csv smarthome/12.csv smarthome/13.csv smarthome/14.csv smarthome/15.csv smarthome/16.csv smarthome/17.csv smarthome/18.csv
 #   deactivate (to deactivate the virtual machine)
 #
 # update is optional, and specifies that the transcripts are already processed by code-extract.py previously. This will regenerate 
@@ -173,7 +173,7 @@ class Interview(object):
       styles = ( '../layout.css' )
 
       page = markup.page()
-      page.init( title=header, header=header, css=styles, charset='utf-8', script=['../format.js', '../jquery-3.3.1.slim.min.js'] )
+      page.init( title=header, header=header, css=styles, charset='utf-8', script=['../jquery-3.3.1.slim.min.js', '../format.js'] )
       page.br()
       page.a( "Index", color="blue", href="index.html")
       page.br( )
@@ -505,6 +505,7 @@ def readOriginalCSVs( transcripts, codes, outputdir, codeCountsPerSpeaker):
   for transcript in transcripts:
     with open(transcript,'r') as transFile:
       transcriptFileName = os.path.splitext(os.path.basename(transcript))[0]
+      print('Current transcript is: ' + transcriptFileName)
       numInterviews += 1
       # Read in transcript, populate new Interview object and codeDict  
       #transReader = unicodecsv.reader( transFile, dialect='excel', encoding='utf-8' )
@@ -528,7 +529,10 @@ def readOriginalCSVs( transcripts, codes, outputdir, codeCountsPerSpeaker):
           
           lastPerson = person
 
-          quoteComment = stripQuotesSpace( row[1] )
+          try:
+            quoteComment = stripQuotesSpace( row[1] )
+          except:
+            print('Quote errored is: ' + quoteComment)
 
           quoteCodes = []
           for code in row[2:]:
