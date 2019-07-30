@@ -5,4 +5,4 @@ output-dir
 test-dir
 smarthome
 Codebook.csv
-DS_Store
+.DS_Store
